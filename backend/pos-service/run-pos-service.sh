@@ -24,19 +24,19 @@ if lsof -Pi :8085 -sTCP:LISTEN -t >/dev/null ; then
     sleep 2
 fi
 
-# Check if debug port 5005 is already in use
-if lsof -Pi :5005 -sTCP:LISTEN -t >/dev/null ; then
-    echo "❌ Debug port 5005 is already in use!"
+# Check if debug port 5010 is already in use
+if lsof -Pi :5010 -sTCP:LISTEN -t >/dev/null ; then
+    echo "❌ Debug port 5010 is already in use!"
     echo "   Stopping existing debug process..."
-    lsof -ti:5005 | xargs kill -9 2>/dev/null
+    lsof -ti:5010 | xargs kill -9 2>/dev/null
     sleep 2
 fi
 
 echo "✅ Ports cleared, starting POS service..."
 
-# Run the auth service with debug mode and dev profile
+# Run the POS service with debug mode and dev profile
 mvn spring-boot:run \
     -Dspring-boot.run.profiles=dev \
-    -Dspring-boot.run.jvmArguments="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
+    -Dspring-boot.run.jvmArguments="-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5010"
 
 echo "🏁 POS service stopped."

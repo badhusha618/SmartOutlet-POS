@@ -1,16 +1,26 @@
 #!/bin/bash
 
 # Product Service Runner Script
-# This script runs the product service in debug mode with dev profile
+# This script builds the common module and runs the product service in debug mode with dev profile
+
+echo "🔧 Building common module..."
+cd ../common-module || { echo "❌ Failed to navigate to common module"; exit 1; }
+
+mvn clean install || { echo "❌ Failed to build common module"; exit 1; }
+
+echo "✅ Common module built successfully."
+echo "=========================================="
+
+cd ../product-service || { echo "❌ Failed to navigate to product-service module"; exit 1; }
 
 echo "🚀 Starting Product Service in Debug Mode..."
 echo "============================================"
 
-# Check if port 8082 is already in use
-if lsof -Pi :8082 -sTCP:LISTEN -t >/dev/null ; then
-    echo "❌ Port 8082 is already in use!"
+# Check if port 8083 is already in use
+if lsof -Pi :8083 -sTCP:LISTEN -t >/dev/null ; then
+    echo "❌ Port 8083 is already in use!"
     echo "   Stopping existing process..."
-    lsof -ti:8082 | xargs kill -9 2>/dev/null
+    lsof -ti:8083 | xargs kill -9 2>/dev/null
     sleep 2
 fi
 

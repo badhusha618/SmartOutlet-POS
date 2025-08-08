@@ -1,5 +1,5 @@
 
-# Multi-stage build for recipe service with common module dependency
+# Multi-stage build for expense service with common module dependency
 FROM openjdk:17-jdk-slim as build
 
 WORKDIR /app
@@ -15,12 +15,12 @@ COPY ../common-module/ ./common-module/
 WORKDIR /app/common-module
 RUN mvn clean install -DskipTests
 
-# Copy recipe service source
+# Copy expense service source
 WORKDIR /app
 COPY pom.xml .
 COPY src ./src
 
-# Build the recipe service
+# Build the expense service
 RUN mvn clean package -DskipTests
 
 # Runtime stage
@@ -32,11 +32,11 @@ WORKDIR /app
 COPY --from=build /app/target/*.jar app.jar
 
 # Expose the port
-EXPOSE 8087
+EXPOSE 8084
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-    CMD curl -f http://localhost:8087/api/recipe/actuator/health || exit 1
+    CMD curl -f http://localhost:8084/expenses/actuator/health || exit 1
 
 # Run the application
 ENTRYPOINT ["java", "-jar", "app.jar"]

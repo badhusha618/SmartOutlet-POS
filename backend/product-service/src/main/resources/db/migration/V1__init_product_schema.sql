@@ -1,5 +1,15 @@
 -- V1__init_product_schema.sql for PostgreSQL
-
+-- Create smartoutlet_product database if it doesn't exist
+DO $$ 
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_database WHERE datname = 'smartoutlet_product') THEN
+        PERFORM pg_terminate_backend(pg_stat_activity.pid)
+        FROM pg_stat_activity
+        WHERE pg_stat_activity.datname = 'smartoutlet_product'
+          AND pid <> pg_backend_pid();
+        EXECUTE 'CREATE DATABASE smartoutlet_product';
+    END IF;
+END $$;
 -- Create categories table
 CREATE TABLE IF NOT EXISTS categories (
     id BIGSERIAL PRIMARY KEY,

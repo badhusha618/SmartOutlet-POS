@@ -1,4 +1,5 @@
-modules = ["nodejs-20"]
+modules = ["java-graalvm22.3", "nodejs-20", "bash"]
+run = "node index.js"
 
 [[ports]]
 localPort = 3000
@@ -16,8 +17,24 @@ externalPort = 3002
 localPort = 3003
 externalPort = 3003
 
+[[ports]]
+localPort = 5005
+externalPort = 3000
+
+[[ports]]
+localPort = 8080
+externalPort = 8080
+
+[[ports]]
+localPort = 8081
+externalPort = 8081
+
+[[ports]]
+localPort = 8082
+externalPort = 4200
+
 [workflows]
-runButton = "Frontend Dev Server"
+runButton = "API Gateway"
 
 [[workflows.workflow]]
 name = "Frontend Dev Server"
@@ -27,3 +44,19 @@ mode = "sequential"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "cd frontend && npm run dev"
+
+[[workflows.workflow]]
+name = "API Gateway"
+author = 46046417
+mode = "sequential"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "cd backend/api-gateway && mvn spring-boot:run"
+
+[deployment]
+run = ["sh", "-c", "node index.js"]
+
+[nix]
+channel = "stable-25_05"
+packages = ["docker-compose"]

@@ -1,0 +1,139 @@
+
+server:
+  port: 8080
+  address: 0.0.0.0
+
+spring:
+  application:
+    name: api-gateway
+  cloud:
+    gateway:
+      routes:
+        # Auth Service Route
+        - id: auth-service
+          uri: http://localhost:8081
+          predicates:
+            - Path=/auth/**
+          filters:
+            - StripPrefix=1
+
+        # Product Service Route  
+        - id: product-service
+          uri: http://localhost:8082
+          predicates:
+            - Path=/products/**
+          filters:
+            - StripPrefix=1
+
+        # Outlet Service Route
+        - id: outlet-service
+          uri: http://localhost:8083
+          predicates:
+            - Path=/outlets/**
+          filters:
+            - StripPrefix=1
+
+        # Expense Service Route
+        - id: expense-service
+          uri: http://localhost:8084
+          predicates:
+            - Path=/expenses/**
+          filters:
+            - StripPrefix=1
+
+        # Sales Service Route
+        - id: sales-service
+          uri: http://localhost:8085
+          predicates:
+            - Path=/sales/**
+          filters:
+            - StripPrefix=1
+
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders: "*"
+
+# SpringDoc Configuration
+springdoc:
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    config-url: /v3/api-docs/swagger-config
+    urls:
+      - url: /v3/api-docs
+        name: API Gateway
+      - url: /v3/api-docs/auth-service
+        name: Auth Service
+      - url: /v3/api-docs/product-service
+        name: Product Service
+      - url: /v3/api-docs/outlet-service
+        name: Outlet Service
+      - url: /v3/api-docs/expense-service
+        name: Expense Service
+      - url: /v3/api-docs/sales-service
+        name: Sales Service
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+
+# Actuator Configuration
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,gateway,routes
+  endpoint:
+    health:
+      show-details: always
+    gateway:
+      enabled: true
+
+# Logging Configuration
+logging:
+  level:
+    org.springframework.cloud.gateway: INFO
+    org.springframework.web.reactive: DEBUG
+    reactor.netty: INFO
+
+# Service URLs for Swagger Aggregation
+services:
+  auth-service:
+    url: http://localhost:8081
+    docs-path: /v3/api-docs
+  product-service:
+    url: http://localhost:8082
+    docs-path: /v3/api-docs
+  outlet-service:
+    url: http://localhost:8083
+    docs-path: /v3/api-docs
+  expense-service:
+    url: http://localhost:8084
+    docs-path: /v3/api-docs
+  sales-service:
+    url: http://localhost:8085
+    docs-path: /v3/api-docs
+
+# Service URLs for Controller Injection
+auth:
+  service:
+    url: http://localhost:8081
+product:
+  service:
+    url: http://localhost:8082
+outlet:
+  service:
+    url: http://localhost:8083
+expense:
+  service:
+    url: http://localhost:8084
+sales:
+  service:
+    url: http://localhost:8085
